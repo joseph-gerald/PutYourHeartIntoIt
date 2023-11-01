@@ -7,6 +7,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.Map;
 
 public class WebUtils {
     public static void openInBrowser(String url) {
@@ -27,6 +29,21 @@ public class WebUtils {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static Map<String, String> getQueryParams(String url) {
+        Map<String, String> queryParams = new HashMap<>();
+        String[] urlParts = url.split("\\?");
+        if (urlParts.length > 1) {
+            String query = urlParts[1];
+            for (String param : query.split("&")) {
+                String[] pair = param.split("=");
+                if (pair.length > 1) {
+                    queryParams.put(pair[0], pair[1]);
+                }
+            }
+        }
+        return queryParams;
     }
 
     public static String decodeURIComponent(String s)

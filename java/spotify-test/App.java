@@ -1,7 +1,5 @@
 package no.dev;
 
-import no.dev.utils.WebUtils;
-
 /**
  * Hello world!
  *
