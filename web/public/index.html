@@ -6,130 +6,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PutYourHeartIntoIt</title>
     <link rel="icon" type="image/x-icon" href="/logo.png">
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
 </head>
-<style>
-    body {
-        background-color: #ef3d33;
-        color: white;
-        font-family: monospace;
-        margin: 0;
-    }
-
-    h1 {
-        margin: 0;
-    }
-
-    #logo {
-        width: 60px;
-    }
-
-    header {
-        display: flex;
-        align-items: center;
-    }
-
-    .content {
-        background-color: rgba(0, 0, 0, 0.2);
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        height: 50vh;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        border-top: solid 2px rgba(0, 0, 0, 0.3);
-        border-bottom: solid 2px rgba(0, 0, 0, 0.3);
-    }
-
-    .heart-rate {
-        user-select: none;
-        display: flex;
-        width: 100%;
-        justify-content: center;
-        flex-direction: column;
-        text-align: center;
-    }
-
-    #slider {
-        width: 400px;
-    }
-
-    #your_bpm {
-        font-size: 100px;
-    }
-
-    #counter {
-        font-size: 200px;
-    }
-
-    @media only screen and (max-width: 600px) {
-        #your_bpm {
-            font-size: calc(20vw - 20px);
-        }
-
-        #counter {
-            font-size: calc(30vw - 20px);
-        }
-
-        #slider {
-            width: 67.5%;
-        }
-    }
-</style>
-<script>
-    // functions & constants
-
-    const age = 15;
-    const max_hr = 220 - age;
-
-    const zone_thresholds = {
-        1: max_hr * 0.65,
-        2: max_hr * 0.75,
-        3: max_hr * 0.85,
-        4: max_hr * 0.88,
-        5: max_hr * 0.9
-    }
-
-    const zone_descriptors = {
-        1: "recovery/easy",
-        2: "aerobic/base",
-        3: "tempo",
-        4: "lactate threshold",
-        5: "anaerobic"
-    }
-
-    const get_zone = (hr) => {
-        const zones = Object.keys(zone_thresholds);
-        let highest_zone = 1;
-        for (zone of zones) {
-            if (hr > zone_thresholds[zone]) {
-                highest_zone = zone
-            }
-        }
-
-        return highest_zone
-    }
-
-    const update_info = () => {
-        const zone = get_zone(heart_rate);
-        const bpm_range = get_bpm_range(heart_rate);
-        counter.innerText = `${heart_rate}♡`
-        current_zone.innerText = `Zone: ${zone} - ${zone_descriptors[zone]}`
-        music_bpm.innerText = `music bpm range: ${bpm_range.low}-${bpm_range.high}`
-    }
-
-    const get_bpm_range = (n) => {
-        const low = n - n % 20;
-        return { low: low, high: low + 20 };
-    }
-</script>
 
 <body>
     <header>
-        <img id="logo" src="/logo.png" alt="">
+        <img id="logo" src="logo.png" alt="">
         <h1>PutYourHeartIntoIt</h1>
+        <div class="spotify">
+            <button id="start_link" onclick="link()">
+                Click to Link
+                <img style="width: 40px; margin-left: 8px;"
+                    src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Spotify_icon.svg/512px-Spotify_icon.svg.png"
+                    alt="">
+            </button>
+        </div>
     </header>
     <div class="content">
         <div class="heart-rate">

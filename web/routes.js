@@ -4,8 +4,9 @@ const errorController = require('./controllers/errorController');
 const apiController = require('./controllers/apiController');
 
 // api logic
-router.post('/query', apiController.query);
+router.post('/fetch_code', apiController.fetchCode)
 router.post('/ping', apiController.ping);
+router.get('/callback', apiController.callback);
 
 router.use((req, res, next) => {
     if (req.method === 'GET') {
