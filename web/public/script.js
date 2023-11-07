@@ -1,4 +1,6 @@
 const authEndpoint = "https://accounts.spotify.com/authorize"
+let loading = true;
+let playlistToPlay = "none";
 
 class SpotifyActions {
     constructor(app) {
@@ -7,16 +9,36 @@ class SpotifyActions {
 
     async fetchUser() {
         // https://developer.spotify.com/documentation/web-api/reference/get-current-users-profile
-        const res = await this.app.sendGET("me");
+        return (await this.app.send("me")).json;
+    }
 
-        console.log(res)
+    async fetchPlaylists() {
+        // https://developer.spotify.com/documentation/web-api/reference/start-a-users-playback
+        return (await this.app.send("me/playlists")).json;
+    }
+
+    async playback(uri) {
+        // https://developer.spotify.com/documentation/web-api/reference/start-a-users-playback
+        const res = (await this.app.send("me/player/play", {
+            method: "PUT",
+            headers: {
+                "Authorization": `Bearer ${app.accessToken}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                context_uri: uri
+            })
+        }));
+
+        if(res.code != 200) {
+            alert(res.json.error.message);
+        }
+
+        return res.json;
     }
 }
 
 class SpotifyApp {
-
-
-
     constructor(clientId, clientSecret, scope, redirectUri) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
@@ -28,6 +50,8 @@ class SpotifyApp {
         this.accessToken = "";
         this.refreshToken = ""; // uh todo: make it refresh access token with this from storage
 
+        this.user = null;
+        this.playlists = null;
         this.actions = new SpotifyActions(this);
     }
 
@@ -41,22 +65,23 @@ class SpotifyApp {
         )
     }
 
-    async sendGET(path) {
+    async send(path, body = {
+        method: "GET",
+        headers: {
+            "Authorization": `Bearer ${app.accessToken}`
+        }
+    }) {
         const base = "https://api.spotify.com/v1/";
         const url = base + path;
 
-        const res = await fetch(url, {
-            method: "GET",
-            headers: {
-                "Authorization": `Bearer ${app.accessToken}`
-            }
-        });
+        const res = await fetch(url, body);
 
         const json = await res.json();
-
+        
         return {
             response: res,
             code: res.status,
+            status: res.statusText,
             json: json
         };
     }
@@ -81,13 +106,14 @@ const link = async () => {
     const tokens = await fetch_access_token(code);
     const accessToken = tokens.access_token;
     const refreshToken = tokens.refresh_token;
-    const expiresIn = tokens.expires_in; // 3600 but could change so yes
+    const expiresIn = tokens.expires_in; // 3600 seconds but could change so yes
+    const expirationDate = Date.now() + expiresIn * 1000; // current unix time + token duration
 
-    console.log(code)
-    console.log(accessToken)
+    localStorage.setItem("expirationDate", expirationDate);
+    localStorage.setItem("accessToken", accessToken);
+    localStorage.setItem("refreshToken", refreshToken);
 
-    app.accessToken = accessToken;
-    app.refreshToken = refreshToken;
+    link_from_cache(); // stored in cache ok
 }
 
 const fetch_code = async () => {
@@ -173,13 +199,59 @@ const get_zone = (hr) => {
 const update_info = () => {
     const zone = get_zone(heart_rate);
     const bpm_range = get_bpm_range(heart_rate);
+
     counter.innerText = `${heart_rate}♡`
     current_zone.innerText = `Zone: ${zone} - ${zone_descriptors[zone]}`
     music_bpm.innerText = `music bpm range: ${bpm_range.low}-${bpm_range.high}`
+    current_playlist.innerText = `Current Playlist: ${playlistToPlay.name ?? "..."}`
+    
+    app.actions.playback(playlistToPlay.uri);
 }
 
 const get_bpm_range = (n) => {
-    const low = n - n % 20;
-    return { low: low, high: low + 20 };
+    if (!app.playlists) {
+        const low = n - n % 20;
+        return { low: low, high: low + 20 };
+    }
+
+    for (playlist of app.playlists) {
+        const split = playlist.description.split("-");
+        if (split.length != 2) continue;
+        const low = parseInt(split[0]);
+        const high = parseInt(split[1]);
+
+        playlistToPlay = playlist;
+        if (n >= low && n <= high) return { low: low, high: high }
+    }
 }
 
+async function link_from_cache() {
+    const accessToken = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+    const expirationDate = localStorage.getItem("expirationDate");
+
+    if (!accessToken || !refreshToken || !expirationDate) {
+        setTimeout(() => {
+            link_status.innerText = "Click to Link";
+            loading = false;
+        }, 500);
+        return;
+    }
+
+    app.accessToken = accessToken;
+    app.refreshToken = refreshToken;
+
+    if (Date.now() > expirationDate) {
+        loading = false;
+        return link(); // if linked before then why not link again
+    }
+
+    app.user = await app.actions.fetchUser();
+    app.playlists = (await app.actions.fetchPlaylists()).items;
+
+    loading = false;
+    link_status.innerText = "Logged in as " + app.user.display_name;
+    update_info();
+}
+
+link_from_cache();

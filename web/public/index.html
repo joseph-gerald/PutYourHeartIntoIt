@@ -16,7 +16,7 @@
         <h1>PutYourHeartIntoIt</h1>
         <div class="spotify">
             <button id="start_link" onclick="link()">
-                Click to Link
+                <b id="link_status">Loading...</b>
                 <img style="width: 40px; margin-left: 8px;"
                     src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Spotify_icon.svg/512px-Spotify_icon.svg.png"
                     alt="">
@@ -26,12 +26,14 @@
     <div class="content">
         <div class="heart-rate">
             <h1 id="your_bpm" style="margin-top: -35px;">Your BPM</h1>
-            <h1 id="counter" style="transform: translateY(-20px);">200♡</h1>
+            <h1 id="counter" style="transform: translateY(-20px);">...♡</h1>
             <h1 id="current_zone" style="font-size: 20px;">Zone: </h1>
-            <h1 id="music_bpm" style="font-size: 20px;">music bpm range: 60-120</h1>
+            <h1 id="music_bpm" style="font-size: 20px;">music bpm range: loading...</h1>
         </div>
         <input type="range" id="slider" min="60" max="220" value="120">
+        <b id="current_playlist">Current Playlist: loading...</b>
     </div>
+
     <script>
         slider.max = max_hr;
         let heart_rate = slider.value;

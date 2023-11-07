@@ -9,13 +9,16 @@ exports.ping = (req, res) => {
 exports.fetchCode = async (req, res) => {
     if(!req.body.state) return;
     const state = req.body.state;
-
+    const startTime = Date.now();
     const interval = setInterval(() => {
         const code = codeMap[state];
         if(code) {
             res.send({"code": code});
             clearInterval(interval)
-        }    
+        } else if(startTime - 5000 > Date.now()) {
+            res.status(408).send({"error": "timed out"})
+            clearInterval(interval)
+        }
     }, 100)
 
     //const code = codeMap[state]
