@@ -1,6 +1,7 @@
 const authEndpoint = "https://accounts.spotify.com/authorize"
 let loading = true;
 let playlistToPlay = "none";
+let prev_bpm_range = "";
 
 class SpotifyActions {
     constructor(app) {
@@ -9,12 +10,17 @@ class SpotifyActions {
 
     async fetchUser() {
         // https://developer.spotify.com/documentation/web-api/reference/get-current-users-profile
-        return (await this.app.proxy("me", "GET", null)).json;
+        return (await this.app.proxy("me", "GET", null)).json.json;
     }
 
     async fetchPlaylists() {
         // https://developer.spotify.com/documentation/web-api/reference/start-a-users-playback
-        return (await this.app.send("me/playlists")).json;
+        return (await this.app.proxy("me/playlists", "GET", null)).json.json;
+    }
+
+    async fetchPlayer() {
+        // https://developer.spotify.com/documentation/web-api/reference/get-information-about-the-users-current-playback
+        return (await this.app.proxy("me/player", "GET", null)).json.json;
     }
 
     async playback(uri) {
@@ -31,7 +37,7 @@ class SpotifyActions {
         }));
 
         if (res.code != 200) {
-            alert(res.json.error.message);
+            console.warn(res.json.error.message);
         }
 
         return res.json;
@@ -52,6 +58,7 @@ class SpotifyApp {
 
         this.user = null;
         this.playlists = null;
+        this.player = null;
         this.actions = new SpotifyActions(this);
     }
 
@@ -120,7 +127,8 @@ class SpotifyApp {
 const appScope = [
     "user-modify-playback-state",
     "user-read-currently-playing",
-    "playlist-read-private"
+    "playlist-read-private",
+    "user-read-playback-state"
 ].join(",")
 const app = new SpotifyApp(
     "3b7da2d08baa4247a0a7a1e52220305f",
@@ -235,7 +243,12 @@ const update_info = () => {
     music_bpm.innerText = `music bpm range: ${bpm_range.low}-${bpm_range.high}`
     current_playlist.innerText = `Current Playlist: ${playlistToPlay.name ?? "..."}`
 
-    app.actions.playback(playlistToPlay.uri);
+    if(bpm_range != prev_bpm_range && playlistToPlay != "none") // stop starting playlist from start every update
+    {
+        app.actions.playback(playlistToPlay.uri);
+    }
+
+    prev_bpm_range = bpm_range;
 }
 
 const get_bpm_range = (n) => {
@@ -283,5 +296,14 @@ async function link_from_cache() {
     link_status.innerText = "Logged in as " + app.user.display_name;
     update_info();
 }
+
+setInterval(async () => {
+    if(!app.user || !app.user.display_name) return;
+    app.player = await app.actions.fetchPlayer();
+    if(app.player) {
+        const artists = app.player.item.artists.map((e) => e.name).join(", ");
+        current_song.innerText = `SONG: ${app.player.item.name} | ALBUM: ${app.player.item.album.name} | ARTISTS: ${artists}`
+    }
+}, 1000);
 
 link_from_cache();

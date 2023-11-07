@@ -20,14 +20,14 @@ exports.proxy = async (req, res) => {
     )
 
     res.send(response)
-    console.log(response.json)
+    //console.log(response.json)
 }
 
 async function send(path, body) {
     const base = "https://api.spotify.com/v1/";
     const url = base + path;
 
-    console.log(url, body)
+    //console.log(url, body)
     const res = await fetch(url, body);
 
     let json = {};
