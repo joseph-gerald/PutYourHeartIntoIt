@@ -36,13 +36,13 @@ async function send(path, body) {
     try {
         json = await res.json();
     } catch (ignored) {
-        console.log("failed parsing json")
+        //console.log("failed parsing json")
     }
 
     try {
         text = await res.text();
     } catch (ignored) {
-        console.log("failed fetching text")
+        //console.log("failed fetching text")
     }
 
     return {

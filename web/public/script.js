@@ -152,6 +152,8 @@ const link = async () => {
     localStorage.setItem("refreshToken", refreshToken);
 
     link_from_cache(); // stored in cache ok
+
+    location.reload(); // some stuff break without reloading after
 }
 
 const fetch_code = async () => {
@@ -243,7 +245,7 @@ const update_info = () => {
     music_bpm.innerText = `music bpm range: ${bpm_range.low}-${bpm_range.high}`
     current_playlist.innerText = `Current Playlist: ${playlistToPlay.name ?? "..."}`
 
-    if(bpm_range != prev_bpm_range && playlistToPlay != "none") // stop starting playlist from start every update
+    if(JSON.stringify(bpm_range) != JSON.stringify(prev_bpm_range) && playlistToPlay != "none") // stop starting playlist from start every update
     {
         app.actions.playback(playlistToPlay.uri);
     }
@@ -276,6 +278,7 @@ async function link_from_cache() {
     if (!accessToken || !refreshToken || !expirationDate) {
         setTimeout(() => {
             link_status.innerText = "Click to Link";
+            current_song.innerText = current_playlist.innerText = "Link to use!!!"
             loading = false;
         }, 500);
         return;

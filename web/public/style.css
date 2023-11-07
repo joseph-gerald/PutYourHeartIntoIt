@@ -1,89 +1,98 @@
+body {
+    background-color: #ef3d33;
+    color: white;
+    font-family: monospace;
+    margin: 0;
+}
 
-    body {
-        background-color: #ef3d33;
-        color: white;
-        font-family: monospace;
-        margin: 0;
-    }
+h1 {
+    margin: 0;
+}
 
-    h1 {
-        margin: 0;
-    }
+#logo {
+    width: 60px;
+}
 
-    #logo {
-        width: 60px;
-    }
+header {
+    display: flex;
+    align-items: center;
+}
 
-    header {
-        display: flex;
-        align-items: center;
-    }
+.content {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 485px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 
-    .content {
+    /*
         backdrop-filter: blur(10px);
         background-color: rgba(0, 0, 0, 0.2);
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        height: 485px;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
         border-top: solid 2px rgba(0, 0, 0, 0.3);
         border-bottom: solid 2px rgba(0, 0, 0, 0.3);
-    }
+        */
+}
 
-    .heart-rate {
-        user-select: none;
-        display: flex;
-        width: 100%;
-        justify-content: center;
-        flex-direction: column;
-        text-align: center;
-    }
+.heart-rate {
+    user-select: none;
+    display: flex;
+    width: 100%;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+}
 
-    #slider {
-        width: 400px;
-    }
+#slider {
+    width: 400px;
+}
 
+#your_bpm {
+    font-size: 100px;
+}
+
+#counter {
+    font-size: 200px;
+}
+
+.spotify {
+    margin-left: auto;
+    margin-right: 10px;
+}
+
+#start_link {
+    background-color: transparent;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 40px;
+    border: none;
+
+    font-family: monospace;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+@media only screen and (max-width: 600px) {
     #your_bpm {
-        font-size: 100px;
+        font-size: calc(20vw - 20px);
     }
 
     #counter {
-        font-size: 200px;
+        font-size: calc(30vw - 20px);
     }
 
-    .spotify {
-        margin-left: auto;
-        margin-right: 10px;
+    #slider {
+        width: 67.5%;
     }
+}
 
-    #start_link {
-        background-color: transparent;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 40px;
-        border: none;
-
-        font-family: monospace;
-        font-size: 15px;
-        cursor: pointer;
-    }
-
-    @media only screen and (max-width: 600px) {
-        #your_bpm {
-            font-size: calc(20vw - 20px);
-        }
-
-        #counter {
-            font-size: calc(30vw - 20px);
-        }
-
-        #slider {
-            width: 67.5%;
-        }
-    }
+.watermark {
+    color: white;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
