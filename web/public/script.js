@@ -9,7 +9,7 @@ class SpotifyActions {
 
     async fetchUser() {
         // https://developer.spotify.com/documentation/web-api/reference/get-current-users-profile
-        return (await this.app.send("me")).json;
+        return (await this.app.proxy("me", "GET", null)).json;
     }
 
     async fetchPlaylists() {
@@ -30,7 +30,7 @@ class SpotifyActions {
             })
         }));
 
-        if(res.code != 200) {
+        if (res.code != 200) {
             alert(res.json.error.message);
         }
 
@@ -65,9 +65,39 @@ class SpotifyApp {
         )
     }
 
+    async proxy(path, method, proxied_body, body = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    }) {
+        const url = "spotify/proxy/";
+
+        body.body ??= {};
+
+        body.body.body = proxied_body;
+        body.body.method = method;
+        body.body.path = path;
+        body.body.token = app.accessToken;
+
+        body.body = JSON.stringify(body.body);
+
+        const res = await fetch(url, body);
+
+        const json = await res.json();
+
+        return {
+            response: res,
+            code: res.status,
+            status: res.statusText,
+            json: json
+        };
+    }
+
     async send(path, body = {
         method: "GET",
         headers: {
+            "mode": "cors", // no-cors, *cors, same-origin
             "Authorization": `Bearer ${app.accessToken}`
         }
     }) {
@@ -77,7 +107,7 @@ class SpotifyApp {
         const res = await fetch(url, body);
 
         const json = await res.json();
-        
+
         return {
             response: res,
             code: res.status,
@@ -204,7 +234,7 @@ const update_info = () => {
     current_zone.innerText = `Zone: ${zone} - ${zone_descriptors[zone]}`
     music_bpm.innerText = `music bpm range: ${bpm_range.low}-${bpm_range.high}`
     current_playlist.innerText = `Current Playlist: ${playlistToPlay.name ?? "..."}`
-    
+
     app.actions.playback(playlistToPlay.uri);
 }
 
