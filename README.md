@@ -3,7 +3,7 @@
 </p>
 
 # PutYourHeartIntoIt
-Monorepo for everything related the FLL 2024 (Masterpiece) project, PutYourHeartIntoIt
+Monorepo for everything related the FLL 2023 (Masterpiece) project, PutYourHeartIntoIt
 
 ## Original Idea
 Clock -> Record HR -> Fetch Playlist To Play Based On HR -> Spotify Play The Playlist -> Repeat
