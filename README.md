@@ -5,6 +5,9 @@
 # PutYourHeartIntoIt
 Monorepo for everything related the FLL 2023 (Masterpiece) project, PutYourHeartIntoIt
 
+## Screenshot
+![showcase](https://github.com/joseph-gerald/PutYourHeartIntoIt/assets/73967013/fecf0417-a7f4-477c-90ee-994acab3a5b6)
+
 ## Original Idea
 Clock -> Record HR -> Fetch Playlist To Play Based On HR -> Spotify Play The Playlist -> Repeat
 
